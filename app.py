@@ -11,14 +11,26 @@ st.title("Logistic Regression Model Prediction")
 st.header("Input Features")
 
 # Input fields for the features
-Pclass = st.number_input("Pclass", min_value=1, max_value=3, step=1)
-SibSp = st.number_input("SibSp", min_value=0, step=1)
-Parch = st.number_input("Parch", min_value=0, step=1)
-Fare = st.number_input("Fare", min_value=0.0, format="%.2f")
-Age = st.number_input("Age", min_value=0.0, format="%.2f")
-Cabin = st.number_input("Cabin (encoded)", min_value=0, step=1)
-Embarked_encoded = st.number_input("Embarked (encoded)", min_value=0.0, format="%.2f")
-Sex_encoded = st.number_input("Sex (encoded)", min_value=0, max_value=1, step=1)
+Pclass = st.radio("Pclass", options=[1, 2, 3], index=0)
+SibSp = st.slider("SibSp", min_value=0, max_value=5, step=1)
+Parch = st.slider("Parch", min_value=0, max_value=5, step=1)
+Fare = st.text_input("Fare", value="0.00")
+Age = st.text_input("Age", value="0.00")
+Cabin = st.radio("Cabin", options=[0, 1], format_func=lambda x: 'No' if x == 0 else 'Yes')
+Embarked = st.radio("Embarked", options=['Cherbourg', 'Queenstown', 'Southampton'])
+Sex_encoded = st.radio("Sex", options=[0, 1], format_func=lambda x: 'Female' if x == 0 else 'Male')
+
+# Mapping Embarked option to its encoded value
+embarked_mapping = {
+    'Cherbourg': 0.553571,
+    'Queenstown': 0.389610,
+    'Southampton': 0.339009
+}
+Embarked_encoded = embarked_mapping[Embarked]
+
+# Convert text inputs to float
+Fare = float(Fare)
+Age = float(Age)
 
 # Prepare the input data as a DataFrame
 test_input_data = {
@@ -40,8 +52,14 @@ if st.button("Predict"):
     prediction_proba = LR.predict_proba(test_input_df)
     
     st.subheader("Prediction")
-    st.write("Prediction:", int(prediction[0]))  # 0 or 1
-    
+    if int(prediction[0]) == 0:
+        st.image("abc.jpg", caption="Passenger is dead!!", use_column_width=True)
+        st.write("😢 Passenger is dead!!")
+    else:
+        st.balloons()
+        st.snow()
+        st.write("🎉 Passenger survived!!")
+        st.markdown("# Passenger Survived")
+
     st.subheader("Prediction Probability")
     st.write("Probability of each class:", prediction_proba[0])
-    
